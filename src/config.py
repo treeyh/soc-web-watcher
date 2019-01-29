@@ -14,13 +14,32 @@ APP_CONFIG = {
     'collect_interval': 7,
 
     # 日志路径
-    'log_path': '~/work/99_tree/03_github/soc-web-watcher/logs',
+    # 'log_path': '~/work/99_tree/03_github/soc-web-watcher/logs',
+    'log_path': '/home/tree/work/99_tree/03_github/soc-web-watcher/logs',
 
     # 采集url列表
     'watcher_urls': [
+        # {
+        #     #类型 页面
+        #     'type': 'page',
+        #     # 采集url
+        #     'url': 'https://www.smzdm.com/jingxuan/p{{page}}/',
+        #     # 采集几页
+        #     'num': 12,
+        # },
         {
+            #类型 服务
+            'type': 'service',
             # 采集url
-            'url': 'https://www.smzdm.com/jingxuan/p{{page}}/',
+            'url': 'https://www.smzdm.com/jingxuan/json_more?timesort={{time}}&filter=s0f0t0b0d0r0p0',
+            # 采集几页
+            'num': 12,
+        },
+        {
+            #类型 服务
+            'type': 'service2',
+            # 采集url
+            'url': 'https://faxian.smzdm.com/json_more?type=a&timesort={{time}}',
             # 采集几页
             'num': 12,
         }
@@ -44,7 +63,7 @@ APP_CONFIG = {
         },
         {
             'min_assessment_count': 25,
-            'worth_rate': 0.7,
+            'worth_rate': 0.75,
         },
     ],
 
@@ -58,9 +77,26 @@ APP_CONFIG = {
         }
     ],
 
-    # 忽略关键词
+    # 忽略关键词 同时忽略标题和分类
     'ignore_keywords': [
-        '测试',
+        '电饭煲',
+        '热水器',
+        '电视',
+        '收音机',
+        '投影仪',
+
+        '灶具',
+
+        '美发',
+        '口红',
+        '妆',
+        '袜',
+
+        '糕点',
+        '拉杆箱',
+
+        '宠物',
+        '床垫',
     ]
 
 }

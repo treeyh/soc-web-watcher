@@ -19,7 +19,7 @@ class BaseWatcher(object):
         return choice(config.APP_CONFIG['user_agents'])
 
 
-    def get_html(self, url):
+    def get_web_content(self, url):
         headers = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
                    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
                    "User-Agent": self.get_user_agent(),
