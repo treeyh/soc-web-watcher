@@ -66,7 +66,7 @@ class SmzdmWatcher(BaseWatcher):
         # 过滤忽略词
         for word in config.APP_CONFIG['ignore_keywords']:
             if word.lower() in item['title'].lower() or word.lower() in item.get('category', ''):
-                self._logger.info('名称匹配过滤规则。名称：' + item['title'])
+                self._logger.info('名称匹配过滤规则。名称：' + item['title'] + '；分类：' + item.get('category', ''))
                 return False
         # 匹配词
         for word in config.APP_CONFIG['match_keywords']:
@@ -99,14 +99,19 @@ class SmzdmWatcher(BaseWatcher):
             if True is result:
                 self.send_msg(info)
 
-    def watcher_service(self, url):
+    def watcher_service(self, url, type):
         content = self.get_web_content(url)
-        items = json.loads(content)
-        if None is items or 0 >= len(items['article_list']):
+        infos = json.loads(content)
+        items = []
+        if 'service1' is type:
+            items = infos.get('article_list', [])
+        else:
+            items = infos
+        if None is items or 0 >= len(items):
             return
 
         time_sort = 0
-        for item in items['article_list']:
+        for item in items:
             info = self.get_item_by_json(item)
             time_sort = info['timesort']
             result = self.check_item(info)
@@ -132,7 +137,7 @@ class SmzdmWatcher(BaseWatcher):
             return
             time.sleep(interval + random.uniform(-1.0, 3.1))
 
-    def watcher_services(self, url, num, interval):
+    def watcher_services(self, url, num, interval, type):
         if None is not num and num < 1:
             raise Exception('num 配置不能小于1')
         if None is not interval and interval < 5:
@@ -140,7 +145,7 @@ class SmzdmWatcher(BaseWatcher):
         time_sort = 9999999999
         for i in range(1, num):
             u = url.replace('{{time}}', str(time_sort))
-            time_sort = self.watcher_service(u)
+            time_sort = self.watcher_service(u, type)
             time.sleep(interval + random.uniform(-1.0, 3.1))
 
     def run(self):
@@ -149,7 +154,7 @@ class SmzdmWatcher(BaseWatcher):
                 if 'page' is urls['type']:
                     self.watcher_pages(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'])
                 else:
-                    self.watcher_services(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'])
+                    self.watcher_services(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'], urls['type'])
             except Exception as e:
                 print(str(e))
                 raise e

@@ -29,7 +29,7 @@ APP_CONFIG = {
         # },
         {
             #类型 服务
-            'type': 'service',
+            'type': 'service1',
             # 采集url
             'url': 'https://www.smzdm.com/jingxuan/json_more?timesort={{time}}&filter=s0f0t0b0d0r0p0',
             # 采集几页
