@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+import sys
+import io
 import os
 from watcher import smzdm_watcher
 import itchat
@@ -40,4 +42,5 @@ def run():
     smz.run()
 
 if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
     run()

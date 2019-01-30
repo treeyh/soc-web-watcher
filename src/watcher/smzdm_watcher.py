@@ -55,7 +55,7 @@ class SmzdmWatcher(BaseWatcher):
 
         info['timesort'] = item['article_timesort']
 
-        self._logger.info('catch_item:' + str_utils.json_encode(info))
+        # self._logger.info('catch_item:' + str_utils.json_encode(info))
         return info
 
     def check_item(self, item):
