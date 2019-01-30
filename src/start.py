@@ -3,9 +3,12 @@
 import sys
 import io
 import os
+import platform
+
 from watcher import smzdm_watcher
 import itchat
 import config
+
 
 
 def read_all_lines_file(file_path, method='r'):
@@ -42,5 +45,7 @@ def run():
     smz.run()
 
 if __name__ == '__main__':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
-    run()
+    system = platform.system()
+    if system is 'Windows':
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
+    # run()
