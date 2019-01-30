@@ -4,20 +4,20 @@ import os
 import time
 import random
 import re
-import requests
 import json
+import traceback
 from bs4 import BeautifulSoup
-import itchat
 
-from utils import log_utils
 import config
+from utils import log_utils, str_utils
 from watcher.base_watcher import BaseWatcher
 
 
 class SmzdmWatcher(BaseWatcher):
-    _logger = None
 
+    _logger = None
     def __init__(self):
+        BaseWatcher.__init__(self)
         self._logger = log_utils.get_logger(os.path.join(config.APP_CONFIG['log_path'], 'run.log'))
         pass
 
@@ -38,7 +38,7 @@ class SmzdmWatcher(BaseWatcher):
         info['pl'] = item.find('div', class_='z-feed-foot-l').find('a', class_='z-group-data').get_text().strip()
         info['price'] = self.get_price(info['prices'])
 
-        self._logger.info('catch_item:' + json.dumps(info))
+        self._logger.info('catch_item:' + str_utils.json_encode(info))
         return info
 
     def get_item_by_json(self, item):
@@ -48,14 +48,14 @@ class SmzdmWatcher(BaseWatcher):
         info['mall'] = item['article_mall']
         info['url'] = item['article_url']
         info['prices'] = item['article_price']
-        info['zhi'] = int(item['article_worthy'])
-        info['buzhi'] = int(item['article_unworthy'])
-        info['pl'] = int(item['article_comment'])
+        info['zhi'] = int(item.get('article_worthy', '0'))
+        info['buzhi'] = int(item.get('article_unworthy', '0'))
+        info['pl'] = int(item.get('article_comment', '0'))
         info['price'] = self.get_price(info['prices'])
 
         info['timesort'] = item['article_timesort']
 
-        self._logger.info('catch_item:' + json.dumps(info))
+        self._logger.info('catch_item:' + str_utils.json_encode(info))
         return info
 
     def check_item(self, item):
@@ -63,15 +63,17 @@ class SmzdmWatcher(BaseWatcher):
         if None is item['price']:
             return False
 
-        # 过滤忽略词
-        for word in config.APP_CONFIG['ignore_keywords']:
-            if word.lower() in item['title'].lower() or word.lower() in item.get('category', ''):
-                self._logger.info('名称匹配过滤规则。名称：' + item['title'] + '；分类：' + item.get('category', ''))
-                return False
         # 匹配词
         for word in config.APP_CONFIG['match_keywords']:
             if word['keyword'].lower() in item['title'].lower() and word['limit_price'] >= item['price']:
                 return True
+
+        # 过滤忽略词
+        for word in config.APP_CONFIG['ignore_keywords']:
+            if word.lower() in item['title'].lower() or word.lower() in item.get('category', ''):
+                msg = '名称匹配过滤规则。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item.get('category', ''), word)
+                self._logger.info(msg)
+                return False
 
         # 比较值不值比例
         count = item['zhi'] + item['buzhi']
@@ -112,19 +114,21 @@ class SmzdmWatcher(BaseWatcher):
 
         time_sort = 0
         for item in items:
-            info = self.get_item_by_json(item)
-            time_sort = info['timesort']
-            result = self.check_item(info)
-            if True is result:
-                self.send_msg(info)
+            try:
+                info = self.get_item_by_json(item)
+                time_sort = info['timesort']
+                result = self.check_item(info)
+                if True is result:
+                    self.send_msg(info)
+            except Exception as e:
+                self._logger.error(str_utils.json_encode(item) + '; error:' + traceback.format_exc())
         return time_sort
 
     def send_msg(self, item):
-        msg = '商品提醒：%s，值：%d，不值：%d，分类：%s，商城：%s，链接：%s' % (item['title'], item.get('mall', '无'), item['zhi'], item['buzhi'], item.get('category', '无'), item['url'])
-        print('send msg: %s' % msg)
-        # self.send_wx(msg)
+        msg = '商品提醒：%s，值：%d，不值：%d，分类：%s，商城：%s，链接：%s' % (item['title'], item['zhi'], item['buzhi'],
+                                                        item.get('category', '无'), item.get('mall', '无'), item['url'])
 
-
+        self.send_wx_msg(item['url'], msg)
 
     def watcher_pages(self, url, num, interval):
         if None is not num and num < 1:

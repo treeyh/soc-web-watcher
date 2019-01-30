@@ -17,6 +17,9 @@ APP_CONFIG = {
     # 'log_path': '~/work/99_tree/03_github/soc-web-watcher/logs',
     'log_path': '/home/tree/work/99_tree/03_github/soc-web-watcher/logs',
 
+    # 微信消息发送用户名
+    'msg_send_user': 'filehelper',
+
     # 采集url列表
     'watcher_urls': [
         # {
@@ -57,13 +60,13 @@ APP_CONFIG = {
     'assessment_rules': [
         {
             # 评价数量
-            'min_assessment_count': 10,
+            'min_assessment_count': 13,
             # 值所占比例
             'worth_rate': 0.8,
         },
         {
-            'min_assessment_count': 25,
-            'worth_rate': 0.75,
+            'min_assessment_count': 30,
+            'worth_rate': 0.76,
         },
     ],
 
@@ -84,6 +87,7 @@ APP_CONFIG = {
         '电视',
         '收音机',
         '投影仪',
+        '游戏本',
 
         '灶具',
 
@@ -91,6 +95,9 @@ APP_CONFIG = {
         '口红',
         '妆',
         '袜',
+        '孕妇',
+        '卫生巾',
+        '大码福利',
 
         '糕点',
         '拉杆箱',
