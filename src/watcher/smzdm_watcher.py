@@ -14,8 +14,8 @@ from watcher.base_watcher import BaseWatcher
 
 
 class SmzdmWatcher(BaseWatcher):
-
     _logger = None
+
     def __init__(self):
         BaseWatcher.__init__(self)
         self._logger = log_utils.get_logger(os.path.join(config.APP_CONFIG['log_path'], 'run.log'))
@@ -70,7 +70,7 @@ class SmzdmWatcher(BaseWatcher):
 
         # 过滤忽略词
         for word in config.APP_CONFIG['ignore_keywords']:
-            if word.lower() in item['title'].lower() or word.lower() in item.get('category', ''):
+            if word in item['title'].lower() or word.lower() in item.get('category', ''):
                 msg = '名称匹配过滤规则。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item.get('category', ''), word)
                 self._logger.info(msg)
                 return False
