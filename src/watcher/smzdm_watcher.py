@@ -26,18 +26,29 @@ class SmzdmWatcher(BaseWatcher):
             return float(ss[0])
         return None
 
-    def get_item_by_json(self, item):
+    def get_item_by_json(self, item, type):
         info = {
+            'id': item.get('article_id', ''),
             'title': '%s-%s' % (item['article_title'], item['article_price']),
             'category': item.get('article_category', {}).get('title', '无'),
             'mall': item['article_mall'],
             'url': item['article_url'],
             'prices': item['article_price'],
-            'zhi': int(item.get('article_worthy', '0')),
-            'buzhi': int(item.get('article_unworthy', '0')),
-            'pl': int(item.get('article_comment', '0')),
-            'timesort': item['article_timesort'],
+            'worthy': int(item.get('article_worthy', '0')),
+            'unworthy': int(item.get('article_unworthy', '0')),
+            'comment': int(item.get('article_comment', '0')),
         }
+
+        if 'service1' is type:
+            info['top_category'] = ''
+            info['pic_url'] = item.get('article_pic_url', '')
+            info['timesort'] = item.get('article_timesort', 0)
+        elif 'service2' is type:
+            info['top_category'] = item.get('top_category', '')
+            info['pic_url'] = item.get('article_pic', '')
+            info['timesort'] = item.get('timesort', 0)
+        else:
+            return None
 
         info['price'] = self.get_price(info['prices'])
 
@@ -46,27 +57,31 @@ class SmzdmWatcher(BaseWatcher):
 
     def check_item(self, item):
         # 判断价格是否正常获取
-        if None is item['price']:
+        if None is item['price'] or config.APP_CONFIG['max_price'] <= item['price']:
+            return False
+
+        if None is item['comment'] or config.APP_CONFIG['min_comment'] >= item['comment']:
             return False
 
         # 匹配词
         for word in config.APP_CONFIG['match_keywords']:
-            if word['keyword'].lower() in item['title'].lower() and word['limit_price'] >= item['price']:
+            if (word['keyword'].lower() in item['title'].lower() or word['keyword'].lower() in item['category']
+                or word['keyword'].lower() in item['top_category']) and word['limit_price'] >= item['price']:
                 return True
 
         # 过滤忽略词
         for word in config.APP_CONFIG['ignore_keywords']:
-            if word in item['title'].lower() or word.lower() in item.get('category', ''):
-                msg = '名称匹配过滤规则。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item.get('category', ''), word)
+            if word in item['title'].lower() or word in item['category'] or word in item['top_category']:
+                msg = '名称匹配过滤规则。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item['category'], word)
                 self._logger.info(msg)
                 return False
 
         # 比较值不值比例
-        count = item['zhi'] + item['buzhi']
+        count = item['worthy'] + item['unworthy']
         if count <= 0:
             return False
 
-        rate = item['zhi'] / count
+        rate = item['worthy'] / count
 
         for rates in config.APP_CONFIG['assessment_rules']:
             if count >= rates['min_assessment_count'] and rate >= rates['worth_rate']:
@@ -88,7 +103,9 @@ class SmzdmWatcher(BaseWatcher):
         time_sort = 0
         for item in items:
             try:
-                info = self.get_item_by_json(item)
+                info = self.get_item_by_json(item, type)
+                if None is info:
+                    continue
                 time_sort = info['timesort']
                 result = self.check_item(info)
                 if True is result:
@@ -98,8 +115,9 @@ class SmzdmWatcher(BaseWatcher):
         return time_sort
 
     def send_msg(self, item):
-        msg = '商品提醒：%s，值：%d，不值：%d，分类：%s，商城：%s，链接：%s' % (item['title'], item['zhi'], item['buzhi'],
-                                                        item.get('category', '无'), item.get('mall', '无'), item['url'])
+        msg = '商品提醒：%s，值：%d，不值：%d，分类：%s-%s，商城：%s，链接：%s' % (item['title'], item['zhi'], item['unworthy'],
+                                                           item['top_category'], item['category'], item['mall'],
+                                                           item['url'])
 
         self.send_wx_msg(item['url'], msg)
 

@@ -25,7 +25,7 @@ APP_CONFIG = {
     # 采集url列表
     'watcher_urls': [
         {
-            #类型 服务
+            #类型 服务 精选好价
             'type': 'service1',
             # 采集url
             'url': 'https://www.smzdm.com/jingxuan/json_more?timesort={{time}}&filter=s0f0t0b0d0r0p0',
@@ -33,10 +33,10 @@ APP_CONFIG = {
             'num': 12,
         },
         {
-            #类型 服务
+            #类型 服务 全部好价
             'type': 'service2',
             # 采集url
-            'url': 'https://faxian.smzdm.com/json_more?type=a&timesort={{time}}',
+            'url': 'https://www.smzdm.com/json_more?type=a&timesort={{time}}',
             # 采集几页
             'num': 12,
         }
@@ -49,6 +49,12 @@ APP_CONFIG = {
         'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:63.0) Gecko/20100101 Firefox/63.0',
     ],
+
+    # 最大价格，超过该价格不通知
+    'max_price': 9999,
+
+    # 最小评论数，防止刷票
+    'min_comment': 3,
 
     # 匹配评价百分比规则列表
     'assessment_rules': [
