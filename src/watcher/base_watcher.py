@@ -15,9 +15,11 @@ class BaseWatcher(object):
     _check_interval = None
     _check_time = None
     _msg_map = None
+    _send_wx_users = None
 
     def __init__(self):
         self._logger = log_utils.get_logger(os.path.join(config.APP_CONFIG['log_path'], 'run.log'))
+        self._send_wx_users = config.APP_CONFIG['msg_send_users']
         self._check_time = time.time()
         self._check_interval = 48 * 60 * 60
         self._msg_map = {}
@@ -81,5 +83,8 @@ class BaseWatcher(object):
         """
         self._logger.info('send msg: %s' % msg)
         if self.check_msg_send(identity):
-            itchat.send(msg, toUserName=config.APP_CONFIG['msg_send_user'])
+            for user in self._send_wx_users:
+                itchat.send(msg, toUserName=user)
             self._logger.info('send over msg: %s' % msg)
+            return True
+        return False

@@ -27,8 +27,8 @@ def read_all_lines_file(file_path, method='r'):
         fh.close()
 
 
-def load_ignore_keywords():
-    keywords = read_all_lines_file(os.path.join(os.getcwd(), 'ignore_keywords.txt'))
+def load_ignore_keywords(self_path):
+    keywords = read_all_lines_file(os.path.join(self_path, 'ignore_keywords.txt'))
     keys = []
     for key in keywords:
         k = key.strip().lower()
@@ -39,10 +39,11 @@ def load_ignore_keywords():
 
 
 def run():
-    config.APP_CONFIG['log_path'] = os.path.join(os.getcwd(), '..', 'logs')
+    self_path = os.path.split(os.path.realpath(__file__))[0]
+    config.APP_CONFIG['log_path'] = os.path.join(self_path, '..', 'logs')
 
-    load_ignore_keywords()
-    itchat.auto_login(True)
+    load_ignore_keywords(self_path)
+    itchat.auto_login(enableCmdQR=True, hotReload=True)
     smz = smzdm_watcher.SmzdmWatcher()
     smz.run()
 

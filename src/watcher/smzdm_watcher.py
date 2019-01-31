@@ -15,9 +15,12 @@ from watcher.base_watcher import BaseWatcher
 class SmzdmWatcher(BaseWatcher):
     _logger = None
 
+    _send_msg_status = None
+
     def __init__(self):
         BaseWatcher.__init__(self)
         self._logger = log_utils.get_logger(os.path.join(config.APP_CONFIG['log_path'], 'run.log'))
+        self._send_msg_status = False
         pass
 
     def get_price(self, price):
@@ -88,7 +91,7 @@ class SmzdmWatcher(BaseWatcher):
 
         return False
 
-    def watcher_service(self, url, type):
+    def watcher_service(self, url, type, page):
         content = self.get_web_content(url)
         infos = json.loads(content)
         items = []
@@ -108,6 +111,7 @@ class SmzdmWatcher(BaseWatcher):
                 time_sort = info['timesort']
                 result = self.check_item(info)
                 if True is result:
+                    self._logger.info('send_msg:%s; page:%d; url:%s;' % ( str_utils.json_encode(info), page, url))
                     self.send_msg(info)
             except Exception as e:
                 self._logger.error(str_utils.json_encode(item) + '; error:' + traceback.format_exc())
@@ -118,7 +122,6 @@ class SmzdmWatcher(BaseWatcher):
                                                                  item['unworthy'], item['comment'],
                                                                  item['top_category'],
                                                                  item['category'], item['mall'], item['url'])
-
         self.send_wx_msg(item['url'], msg)
 
     def watcher_services(self, url, num, interval, type):
@@ -129,17 +132,21 @@ class SmzdmWatcher(BaseWatcher):
         time_sort = 9999999999
         for i in range(1, num):
             u = url.replace('{{time}}', str(time_sort))
-            time_sort = self.watcher_service(u, type)
+            time_sort = self.watcher_service(u, type, i)
             time.sleep(interval + random.uniform(-1.0, 4.1))
 
     def run(self):
-        for urls in config.APP_CONFIG['watcher_urls']:
-            try:
-                self.watcher_services(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'], urls['type'])
-            except Exception as e:
-                print(str(e))
-                raise e
-        time.sleep(config.APP_CONFIG['task_interval'] + random.uniform(-1.0, 10.1))
+        while True:
+            self._send_msg_status = False
+            for urls in config.APP_CONFIG['watcher_urls']:
+                try:
+                    self.watcher_services(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'], urls['type'])
+                except Exception as e:
+                    print(str(e))
+                    raise e
+            if self._send_msg_status:
+                self.send_wx_msg( str(time.time()), '---------------')
+            time.sleep(config.APP_CONFIG['task_interval'] + random.uniform(-1.0, 10.1))
 
 
 if __name__ == '__main__':

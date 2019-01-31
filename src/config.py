@@ -19,8 +19,10 @@ APP_CONFIG = {
     # 日志路径
     'log_path': os.path.join('/data/logs', APP_NAME),
 
-    # 微信消息发送用户名
-    'msg_send_user': 'filehelper',
+    # 微信消息发送用户名列表
+    'msg_send_users': [
+        'filehelper'
+    ],
 
     # 采集url列表
     'watcher_urls': [
@@ -30,7 +32,7 @@ APP_CONFIG = {
             # 采集url
             'url': 'https://www.smzdm.com/jingxuan/json_more?timesort={{time}}&filter=s0f0t0b0d0r0p0',
             # 采集几页
-            'num': 24,
+            'num': 20,
         },
         {
             #类型 服务 全部好价
@@ -38,7 +40,7 @@ APP_CONFIG = {
             # 采集url
             'url': 'https://www.smzdm.com/json_more?type=a&timesort={{time}}',
             # 采集几页
-            'num': 48,
+            'num': 36,
         }
     ],
 
