@@ -2,10 +2,13 @@
 
 import os
 
-APP_CONFIG = {
+# 系统版本号
+VERSION = '1.0.0'
 
-    # 系统版本号
-    'version': '0.0.1',
+# 应用名称
+APP_NAME = 'soc-web-watcher'
+
+APP_CONFIG = {
 
     # 任务循环间隔 秒, 不能小于5秒
     'task_interval': 30,
@@ -14,22 +17,13 @@ APP_CONFIG = {
     'collect_interval': 7,
 
     # 日志路径
-    # 'log_path': '~/work/99_tree/03_github/soc-web-watcher/logs',
-    'log_path': '/home/tree/work/99_tree/03_github/soc-web-watcher/logs',
+    'log_path': os.path.join('/data/logs', APP_NAME),
 
     # 微信消息发送用户名
     'msg_send_user': 'filehelper',
 
     # 采集url列表
     'watcher_urls': [
-        # {
-        #     #类型 页面
-        #     'type': 'page',
-        #     # 采集url
-        #     'url': 'https://www.smzdm.com/jingxuan/p{{page}}/',
-        #     # 采集几页
-        #     'num': 12,
-        # },
         {
             #类型 服务
             'type': 'service1',
@@ -80,7 +74,7 @@ APP_CONFIG = {
         }
     ],
 
-    # 忽略关键词 同时忽略标题和分类
+    # 忽略关键词 同时忽略标题和分类，启动时会从ignore_keywords.txt文件中读取
     'ignore_keywords': []
 
 }

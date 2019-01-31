@@ -6,7 +6,6 @@ import random
 import re
 import json
 import traceback
-from bs4 import BeautifulSoup
 
 import config
 from utils import log_utils, str_utils
@@ -27,35 +26,22 @@ class SmzdmWatcher(BaseWatcher):
             return float(ss[0])
         return None
 
-    def get_item(self, item):
-        info = {}
-        info['title'] = item.find('h5').find('a').get_text()
-        info['url'] = item.find('h5').find('a')['href']
-        info['prices'] = item.find('h5').find('span', class_='z-highlight').get_text()
-        zs = item.find('span', class_='feed-btn-group').find_all('span', class_='unvoted-wrap')
-        info['zhi'] = int(zs[0].get_text().strip())
-        info['buzhi'] = int(zs[1].get_text().strip())
-        info['pl'] = item.find('div', class_='z-feed-foot-l').find('a', class_='z-group-data').get_text().strip()
+    def get_item_by_json(self, item):
+        info = {
+            'title': '%s-%s' % (item['article_title'], item['article_price']),
+            'category': item.get('article_category', {}).get('title', '无'),
+            'mall': item['article_mall'],
+            'url': item['article_url'],
+            'prices': item['article_price'],
+            'zhi': int(item.get('article_worthy', '0')),
+            'buzhi': int(item.get('article_unworthy', '0')),
+            'pl': int(item.get('article_comment', '0')),
+            'timesort': item['article_timesort'],
+        }
+
         info['price'] = self.get_price(info['prices'])
 
         self._logger.info('catch_item:' + str_utils.json_encode(info))
-        return info
-
-    def get_item_by_json(self, item):
-        info = {}
-        info['title'] = '%s-%s' % (item['article_title'], item['article_price'])
-        info['category'] = item.get('article_category', {}).get('title', '无')
-        info['mall'] = item['article_mall']
-        info['url'] = item['article_url']
-        info['prices'] = item['article_price']
-        info['zhi'] = int(item.get('article_worthy', '0'))
-        info['buzhi'] = int(item.get('article_unworthy', '0'))
-        info['pl'] = int(item.get('article_comment', '0'))
-        info['price'] = self.get_price(info['prices'])
-
-        info['timesort'] = item['article_timesort']
-
-        # self._logger.info('catch_item:' + str_utils.json_encode(info))
         return info
 
     def check_item(self, item):
@@ -88,19 +74,6 @@ class SmzdmWatcher(BaseWatcher):
 
         return False
 
-    def watcher_page(self, url):
-        content = self.get_web_content(url)
-        if None is content:
-            return
-        soup = BeautifulSoup(content, 'html.parser')
-        items = soup.find(id='feed-main-list').find_all('li', class_='feed-row-wide')
-
-        for item in items:
-            info = self.get_item(item)
-            result = self.check_item(info)
-            if True is result:
-                self.send_msg(info)
-
     def watcher_service(self, url, type):
         content = self.get_web_content(url)
         infos = json.loads(content)
@@ -130,17 +103,6 @@ class SmzdmWatcher(BaseWatcher):
 
         self.send_wx_msg(item['url'], msg)
 
-    def watcher_pages(self, url, num, interval):
-        if None is not num and num < 1:
-            raise Exception('num 配置不能小于1')
-        if None is not interval and interval < 5:
-            raise Exception('collect_interval 配置不能小于5')
-        for i in range(1, num):
-            u = url.replace('{{page}}', str(i))
-            self.watcher_page(u)
-            return
-            time.sleep(interval + random.uniform(-1.0, 3.1))
-
     def watcher_services(self, url, num, interval, type):
         if None is not num and num < 1:
             raise Exception('num 配置不能小于1')
@@ -155,10 +117,7 @@ class SmzdmWatcher(BaseWatcher):
     def run(self):
         for urls in config.APP_CONFIG['watcher_urls']:
             try:
-                if 'page' is urls['type']:
-                    self.watcher_pages(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'])
-                else:
-                    self.watcher_services(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'], urls['type'])
+                self.watcher_services(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'], urls['type'])
             except Exception as e:
                 print(str(e))
                 raise e
