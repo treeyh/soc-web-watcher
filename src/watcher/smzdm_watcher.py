@@ -60,9 +60,6 @@ class SmzdmWatcher(BaseWatcher):
         if None is item['price'] or config.APP_CONFIG['max_price'] <= item['price']:
             return False
 
-        if None is item['comment'] or config.APP_CONFIG['min_comment'] >= item['comment']:
-            return False
-
         # 匹配词
         for word in config.APP_CONFIG['match_keywords']:
             if (word['keyword'].lower() in item['title'].lower() or word['keyword'].lower() in item['category']
@@ -84,7 +81,9 @@ class SmzdmWatcher(BaseWatcher):
         rate = item['worthy'] / count
 
         for rates in config.APP_CONFIG['assessment_rules']:
-            if count >= rates['min_assessment_count'] and rate >= rates['worth_rate']:
+            # 判断值比例评论数
+            if count >= rates['min_assessment_count'] and rate >= rates['worth_rate'] and \
+                    None is not item['comment'] and item['comment'] >= config.APP_CONFIG['min_comment']:
                 return True
 
         return False
@@ -115,9 +114,10 @@ class SmzdmWatcher(BaseWatcher):
         return time_sort
 
     def send_msg(self, item):
-        msg = '商品提醒：%s，值：%d，不值：%d，分类：%s-%s，商城：%s，链接：%s' % (item['title'], item['zhi'], item['unworthy'],
-                                                           item['top_category'], item['category'], item['mall'],
-                                                           item['url'])
+        msg = '商品提醒：%s，值：%d，不值：%d，评论：%d，分类：%s-%s，商城：%s，链接：%s' % (item['title'], item['worthy'],
+                                                                 item['unworthy'], item['comment'],
+                                                                 item['top_category'],
+                                                                 item['category'], item['mall'], item['url'])
 
         self.send_wx_msg(item['url'], msg)
 
@@ -130,7 +130,7 @@ class SmzdmWatcher(BaseWatcher):
         for i in range(1, num):
             u = url.replace('{{time}}', str(time_sort))
             time_sort = self.watcher_service(u, type)
-            time.sleep(interval + random.uniform(-1.0, 3.1))
+            time.sleep(interval + random.uniform(-1.0, 4.1))
 
     def run(self):
         for urls in config.APP_CONFIG['watcher_urls']:
@@ -139,8 +139,7 @@ class SmzdmWatcher(BaseWatcher):
             except Exception as e:
                 print(str(e))
                 raise e
-        return
-        time.sleep(config.APP_CONFIG['task_interval'])
+        time.sleep(config.APP_CONFIG['task_interval'] + random.uniform(-1.0, 10.1))
 
 
 if __name__ == '__main__':

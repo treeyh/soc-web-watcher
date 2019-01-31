@@ -11,7 +11,7 @@ APP_NAME = 'soc-web-watcher'
 APP_CONFIG = {
 
     # 任务循环间隔 秒, 不能小于5秒
-    'task_interval': 30,
+    'task_interval': 60,
 
     # 采集间隔 秒, 不能小于5秒
     'collect_interval': 7,
@@ -30,7 +30,7 @@ APP_CONFIG = {
             # 采集url
             'url': 'https://www.smzdm.com/jingxuan/json_more?timesort={{time}}&filter=s0f0t0b0d0r0p0',
             # 采集几页
-            'num': 12,
+            'num': 24,
         },
         {
             #类型 服务 全部好价
@@ -38,7 +38,7 @@ APP_CONFIG = {
             # 采集url
             'url': 'https://www.smzdm.com/json_more?type=a&timesort={{time}}',
             # 采集几页
-            'num': 12,
+            'num': 48,
         }
     ],
 
@@ -53,7 +53,7 @@ APP_CONFIG = {
     # 最大价格，超过该价格不通知
     'max_price': 9999,
 
-    # 最小评论数，防止刷票
+    # 最小评论数，防止刷票，在匹配值百分比后判断
     'min_comment': 3,
 
     # 匹配评价百分比规则列表
