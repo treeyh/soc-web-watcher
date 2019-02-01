@@ -48,26 +48,26 @@ class BaseWatcher(object):
             return result.content
         return None
 
-    def check_msg_send(self, identity):
+    def check_msg_send(self, id):
         """
         验证消息是否需要发送
-        :param identity:
+        :param id:
         :return:
         """
-        if None is not self._redis_utils.get(identity):
+        if None is not self._redis_utils.get('soc-web-watcher:%s' % id):
             return False
-        self._redis_utils.set(identity, str(time.time()), self._check_interval)
+        self._redis_utils.set(id, str(time.time()), self._check_interval)
         return True
 
-    def send_wx_msg(self, identity, msg):
+    def send_wx_msg(self, id, msg):
         """
         发送微信消息
-        :param identity: 消息标识
+        :param id: 消息标识
         :param msg: 消息内容
         :return:
         """
         self._logger.info('send msg: %s' % msg)
-        if self.check_msg_send(identity):
+        if self.check_msg_send(id):
             for user in self._send_wx_users:
                 itchat.send(msg, toUserName=user)
             self._logger.info('send over msg: %s' % msg)

@@ -122,7 +122,7 @@ class SmzdmWatcher(BaseWatcher):
                                                                  item['unworthy'], item['comment'],
                                                                  item['top_category'],
                                                                  item['category'], item['mall'], item['url'])
-        self.send_wx_msg(item['url'], msg)
+        self.send_wx_msg(item['id'], msg)
 
     def watcher_services(self, url, num, interval, type):
         if None is not num and num < 1:
