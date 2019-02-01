@@ -53,9 +53,6 @@ class BaseWatcher(object):
         :param identity:
         :return:
         """
-        print(self._msg_map)
-        print(self._check_interval)
-        print(self._check_time)
         if None is not self._msg_map.get(identity, None):
             return False
         ti = time.time()
