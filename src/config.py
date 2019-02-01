@@ -10,11 +10,11 @@ APP_NAME = 'soc-web-watcher'
 
 APP_CONFIG = {
 
-    # 任务循环间隔 秒, 不能小于5秒
+    # 任务循环间隔 秒, 不能小于10秒
     'task_interval': 60,
 
-    # 采集间隔 秒, 不能小于5秒
-    'collect_interval': 7,
+    # 采集间隔 秒, 不能小于1秒
+    'collect_interval': 1,
 
     # 日志路径
     'log_path': os.path.join('/data/logs', APP_NAME),
@@ -32,7 +32,7 @@ APP_CONFIG = {
             # 采集url
             'url': 'https://www.smzdm.com/jingxuan/json_more?timesort={{time}}&filter=s0f0t0b0d0r0p0',
             # 采集几页
-            'num': 20,
+            'num': 36,
         },
         {
             #类型 服务 全部好价
@@ -40,7 +40,7 @@ APP_CONFIG = {
             # 采集url
             'url': 'https://www.smzdm.com/json_more?type=a&timesort={{time}}',
             # 采集几页
-            'num': 36,
+            'num': 72,
         }
     ],
 

@@ -127,26 +127,30 @@ class SmzdmWatcher(BaseWatcher):
     def watcher_services(self, url, num, interval, type):
         if None is not num and num < 1:
             raise Exception('num 配置不能小于1')
-        if None is not interval and interval < 5:
-            raise Exception('collect_interval 配置不能小于5')
+        if None is not interval and interval < 1:
+            raise Exception('collect_interval 配置不能小于1')
         time_sort = 9999999999
         for i in range(1, num):
             u = url.replace('{{time}}', str(time_sort))
             time_sort = self.watcher_service(u, type, i)
-            time.sleep(interval + random.uniform(-1.0, 4.1))
+            time.sleep(interval + random.uniform(0, 2.1))
 
     def run(self):
+        if None is not config.APP_CONFIG['task_interval'] and config.APP_CONFIG['task_interval'] < 10:
+            msg = 'task_interval 配置不能小于10'
+            self._logger.error(msg)
+            raise Exception(msg)
         while True:
             self._send_msg_status = False
             for urls in config.APP_CONFIG['watcher_urls']:
                 try:
                     self.watcher_services(urls['url'], urls['num'], config.APP_CONFIG['collect_interval'], urls['type'])
                 except Exception as e:
-                    print(str(e))
+                    self._logger.error('error:' + traceback.format_exc())
                     raise e
             if self._send_msg_status:
                 self.send_wx_msg( str(time.time()), '---------------')
-            time.sleep(config.APP_CONFIG['task_interval'] + random.uniform(-1.0, 10.1))
+            time.sleep(config.APP_CONFIG['task_interval'] + random.uniform(0, 3.1))
 
 
 if __name__ == '__main__':
