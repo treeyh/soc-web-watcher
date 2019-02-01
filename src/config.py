@@ -19,6 +19,13 @@ APP_CONFIG = {
     # 日志路径
     'log_path': os.path.join('/data/logs', APP_NAME),
 
+    # redis 配置
+    'redis_config': {
+        'host': '127.0.0.1',
+        'port': 6379,
+        'db': 0,
+    },
+
     # 微信消息发送用户名列表
     'msg_send_users': [
         'filehelper'
@@ -86,3 +93,8 @@ APP_CONFIG = {
     'ignore_keywords': []
 
 }
+
+
+if __name__ == '__main__':
+    s = '/data/log/a.c'
+    print(os.path.split(s)[-1])

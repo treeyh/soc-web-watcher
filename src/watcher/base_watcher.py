@@ -6,9 +6,8 @@ import requests
 from random import choice
 import itchat
 
-from utils import log_utils
+from utils import log_utils, redis_utils
 import config
-
 
 class BaseWatcher(object):
     _logger = None
@@ -16,6 +15,7 @@ class BaseWatcher(object):
     _check_time = None
     _msg_map = None
     _send_wx_users = None
+    _redis_utils = None
 
     def __init__(self):
         self._logger = log_utils.get_logger(os.path.join(config.APP_CONFIG['log_path'], 'run.log'))
@@ -23,6 +23,7 @@ class BaseWatcher(object):
         self._check_time = time.time()
         self._check_interval = 48 * 60 * 60
         self._msg_map = {}
+        self._redis_utils = redis_utils.get_redis_utils(**config.APP_CONFIG['redis_config'])
 
     def get_user_agent(self):
         """
@@ -53,23 +54,10 @@ class BaseWatcher(object):
         :param identity:
         :return:
         """
-        if None is not self._msg_map.get(identity, None):
+        if None is not self._redis_utils.get(identity):
             return False
-        ti = time.time()
-        if ti > self._check_time + self._check_interval:
-            self.clear_msg()
-        self._msg_map[identity] = time.time()
+        self._redis_utils.set(identity, str(time.time()), self._check_interval)
         return True
-
-    def clear_msg(self):
-        """
-        清理过期消息
-        :return:
-        """
-        for k, v in self._msg_map.items():
-            if v < self._check_time:
-                del self._msg_map[k]
-        self._check_time = time
 
     def send_wx_msg(self, identity, msg):
         """
