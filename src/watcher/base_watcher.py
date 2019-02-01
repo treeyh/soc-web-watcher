@@ -54,9 +54,12 @@ class BaseWatcher(object):
         :param id:
         :return:
         """
-        if None is not self._redis_utils.get('soc-web-watcher:%s' % id):
+        key = 'soc-web-watcher:%s' % id
+        if None is not self._redis_utils.get(key):
             return False
-        self._redis_utils.set(id, str(time.time()), self._check_interval)
+        ti = str(int(time.time()))
+
+        self._redis_utils.set(key=key, val=ti, time=self._check_interval)
         return True
 
     def send_wx_msg(self, id, msg):
