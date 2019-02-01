@@ -111,7 +111,7 @@ class SmzdmWatcher(BaseWatcher):
                 time_sort = info['timesort']
                 result = self.check_item(info)
                 if True is result:
-                    self._logger.info('send_msg:%s; page:%d; url:%s;' % ( str_utils.json_encode(info), page, url))
+                    self._logger.info('send_msg:%s; page:%d; url:%s;' % (str_utils.json_encode(info), page, url))
                     self.send_msg(info)
             except Exception as e:
                 self._logger.error(str_utils.json_encode(item) + '; error:' + traceback.format_exc())
@@ -132,6 +132,8 @@ class SmzdmWatcher(BaseWatcher):
         time_sort = 9999999999
         for i in range(1, num):
             u = url.replace('{{time}}', str(time_sort))
+            self._logger.info('.......................watcher_run type:%s, page:%d, url:%s  ........................'
+                              % (type, i, u))
             time_sort = self.watcher_service(u, type, i)
             time.sleep(interval + random.uniform(0, 2.1))
 
@@ -149,7 +151,7 @@ class SmzdmWatcher(BaseWatcher):
                     self._logger.error('error:' + traceback.format_exc())
                     raise e
             if self._send_msg_status:
-                self.send_wx_msg( str(time.time()), '---------------')
+                self.send_wx_msg(str(time.time()), '---------------')
             time.sleep(config.APP_CONFIG['task_interval'] + random.uniform(0, 3.1))
 
 
