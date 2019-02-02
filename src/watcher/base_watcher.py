@@ -9,6 +9,7 @@ import itchat
 from utils import log_utils, redis_utils
 import config
 
+
 class BaseWatcher(object):
     _logger = None
     _check_interval = None
@@ -57,6 +58,7 @@ class BaseWatcher(object):
         """
         key = 'soc-web-watcher:%s' % id
         if None is not self._redis_utils.get(key):
+            self._logger.info('send msg exsit key:%s' % key)
             return False
         ti = str(int(time.time()))
 
@@ -74,6 +76,6 @@ class BaseWatcher(object):
         if self.check_msg_send(id):
             for user in self._send_wx_users:
                 itchat.send(msg, toUserName=user)
-            self._logger.info('send over msg: %s' % msg)
+            self._logger.info('send msg over msgid:%s, msg: %s' % (id, msg))
             return True
         return False

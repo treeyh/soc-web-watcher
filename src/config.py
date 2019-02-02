@@ -26,9 +26,13 @@ APP_CONFIG = {
         'db': 0,
     },
 
-    # 微信消息发送用户名列表
+    # 微信消息发送用户名列表, 启动后会补充用户昵称列表内用户
     'msg_send_users': [
-        'filehelper'
+        'filehelper',
+    ],
+    # 微信消息发送用户昵称列表
+    'msg_send_nick_names': [
+        '测试用户',
     ],
 
     # 采集url列表

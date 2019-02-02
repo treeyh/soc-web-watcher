@@ -115,7 +115,7 @@ class SmzdmWatcher(BaseWatcher):
                 time_sort = info['timesort']
                 result = self.check_item(info)
                 if True is result:
-                    self._logger.info('send_msg:%s; page:%d; url:%s;' % (str_utils.json_encode(info), page, url))
+                    self._logger.info(' page:%d; url:%s; send_msg:%s;' % (page, url, str_utils.json_encode(info)))
                     self.send_msg(info)
             except Exception as e:
                 self._logger.error(str_utils.json_encode(item) + '; error:' + traceback.format_exc())
