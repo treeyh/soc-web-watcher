@@ -91,10 +91,16 @@ APP_CONFIG = {
     'match_keywords': [
         {
             # 关键词
-            'keyword': '测试',
+            'keyword': 'airpods',
             # 价格限制，低于该价格会通知
-            'limit_price': 12.1,
-        }
+            'limit_price': 900,
+        },
+        {
+            # 关键词
+            'keyword': '限免',
+            # 价格限制，低于该价格会通知，为负数则不做价格判断
+            'limit_price': -1,
+        },
     ],
 
     # 忽略关键词 同时忽略标题和分类，启动时会从ignore_keywords.txt文件中读取
