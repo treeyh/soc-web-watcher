@@ -80,7 +80,6 @@ if __name__ == '__main__':
 
     system = platform.system()
     if system is 'Windows':
-        # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
         _logger.error('soc-web-watcher can not run windows.')
         sys.exit(-1)
     run()
