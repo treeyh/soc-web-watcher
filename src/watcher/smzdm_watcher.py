@@ -59,20 +59,24 @@ class SmzdmWatcher(BaseWatcher):
         return info
 
     def check_item(self, item):
-        # 判断价格是否正常获取
-        if None is item['price'] or config.APP_CONFIG['max_price'] <= item['price']:
-            return False
-
-        # 匹配词
+        # 判断匹配词
         for word in config.APP_CONFIG['match_keywords']:
-            if (word['keyword'].lower() in item['title'].lower() or word['keyword'].lower() in item['category']
-                or word['keyword'].lower() in item['top_category']) and word['limit_price'] >= item['price']:
+            key = word['keyword'].lower()
+            if key not in item['title'].lower() and key not in item['category'] and key not in item['top_category']:
+                continue
+            if word['limit_price'] <= 0:
                 return True
+            if None is not item.get('price', None) and word['limit_price'] >= item['price']:
+                return True
+
+        # 判断价格是否正常获取
+        if None is item.get('price', None) or config.APP_CONFIG['max_price'] <= item['price']:
+            return False
 
         # 过滤忽略词
         for word in config.APP_CONFIG['ignore_keywords']:
             if word in item['title'].lower() or word in item['category'] or word in item['top_category']:
-                msg = '名称匹配过滤规则。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item['category'], word)
+                msg = 'keyword matching ignore keywords。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item['category'], word)
                 self._logger.info(msg)
                 return False
 
@@ -118,10 +122,11 @@ class SmzdmWatcher(BaseWatcher):
         return time_sort
 
     def send_msg(self, item):
-        msg = '商品提醒：%s，值：%d，不值：%d，评论：%d，分类：%s-%s，商城：%s，链接：%s' % (item['title'], item['worthy'],
-                                                                 item['unworthy'], item['comment'],
-                                                                 item['top_category'],
-                                                                 item['category'], item['mall'], item['url'])
+        msg = '【提醒】%s\n值:%d，不值:%d，评论:%d\n商城:%s,分类:%s%s\n%s' % (item['title'], item['worthy'],
+                                                               item['unworthy'], item['comment'], item['mall'],
+                                                               '' if '' is item.get('top_category', '') else (
+                                                                       '%s-' % item['top_category']),
+                                                               item['category'], item['url'])
         self.send_wx_msg(item['id'], msg)
 
     def watcher_services(self, url, num, interval, type):
@@ -150,8 +155,8 @@ class SmzdmWatcher(BaseWatcher):
                 except Exception as e:
                     self._logger.error('error:' + traceback.format_exc())
                     raise e
-            if self._send_msg_status:
-                self.send_wx_msg(str(time.time()), '---------------')
+            # if self._send_msg_status:
+            #     self.send_wx_msg(str(time.time()), '---------------')
             time.sleep(config.APP_CONFIG['task_interval'] + random.uniform(0, 3.1))
 
 
