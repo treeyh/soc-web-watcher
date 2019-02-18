@@ -74,6 +74,7 @@ def run():
 
 
 if __name__ == '__main__':
+
     self_path = os.path.split(os.path.realpath(__file__))[0]
     config.APP_CONFIG['log_path'] = os.path.join(self_path, '..', 'logs')
     _logger = log_utils.get_logger(os.path.join(config.APP_CONFIG['log_path'], 'run.log'))

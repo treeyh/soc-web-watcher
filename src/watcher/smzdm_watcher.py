@@ -55,7 +55,7 @@ class SmzdmWatcher(BaseWatcher):
 
         info['price'] = self.get_price(info['prices'])
 
-        self._logger.info('catch_item:' + str_utils.json_encode(info).encode("utf-8"))
+        self._logger.info('catch_item:' + str_utils.json_encode(info))
         return info
 
     def check_item(self, item):
@@ -76,7 +76,7 @@ class SmzdmWatcher(BaseWatcher):
         # 过滤忽略词
         for word in config.APP_CONFIG['ignore_keywords']:
             if word in item['title'].lower() or word in item['category'] or word in item['top_category']:
-                msg = 'keyword matching ignore keywords。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item['category'], word)
+                msg = u'keyword matching ignore keywords。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item['category'], word)
                 self._logger.info(msg)
                 return False
 
