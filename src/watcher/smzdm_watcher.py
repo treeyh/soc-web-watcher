@@ -55,7 +55,7 @@ class SmzdmWatcher(BaseWatcher):
 
         info['price'] = self.get_price(info['prices'])
 
-        self._logger.info('catch_item:' + str_utils.json_encode(info))
+        self._logger.info('catch_item:' + str_utils.json_encode(info).encode("utf-8"))
         return info
 
     def check_item(self, item):

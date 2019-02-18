@@ -26,6 +26,9 @@ APP_CONFIG = {
         'db': 0,
     },
 
+    # 缓存key前缀
+    'cache_pre_key': 'soc-web-watcher',
+
     # 微信消息发送用户名列表, 启动后会补充用户昵称列表内用户
     'msg_send_users': [
         'filehelper',
@@ -38,7 +41,7 @@ APP_CONFIG = {
     # 采集url列表
     'watcher_urls': [
         {
-            #类型 服务 精选好价
+            # 类型 服务 精选好价
             'type': 'service1',
             # 采集url
             'url': 'https://www.smzdm.com/jingxuan/json_more?timesort={{time}}&filter=s0f0t0b0d0r0p0',
@@ -46,7 +49,7 @@ APP_CONFIG = {
             'num': 36,
         },
         {
-            #类型 服务 全部好价
+            # 类型 服务 全部好价
             'type': 'service2',
             # 采集url
             'url': 'https://www.smzdm.com/json_more?type=a&timesort={{time}}',
@@ -111,7 +114,6 @@ APP_CONFIG = {
     'ignore_keywords': []
 
 }
-
 
 if __name__ == '__main__':
     s = '/data/log/a.c'

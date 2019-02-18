@@ -56,7 +56,7 @@ class BaseWatcher(object):
         :param id:
         :return:
         """
-        key = 'soc-web-watcher:%s' % id
+        key = '%s:%s' % (config.APP_CONFIG['cache_pre_key'], id)
         if None is not self._redis_utils.get(key):
             self._logger.info('send msg exsit key:%s' % key)
             return False
