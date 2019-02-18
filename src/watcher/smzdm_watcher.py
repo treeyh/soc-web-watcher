@@ -122,12 +122,28 @@ class SmzdmWatcher(BaseWatcher):
         return time_sort
 
     def send_msg(self, item):
-        msg = '【提醒】%s\n值:%d，不值:%d，评论:%d\n商城:%s,分类:%s%s\n%s' % (item['title'], item['worthy'],
-                                                               item['unworthy'], item['comment'], item['mall'],
+        msg = '''{
+     "msgtype": "markdown",
+     "markdown": {"title":"%s",
+"text":"#### %s  \n > 值:%d，不值:%d，评论:%d \n > 商城:%s,分类:%s%s\n > [%s](%s)\n\n ![%s](%s)"
+     },
+    "at": {
+        "atMobiles": [], 
+        "isAtAll": false
+    }
+ }''' % (item['title'], item['title'], item['worthy'], item['unworthy'], item['comment'], item['mall'],
                                                                '' if '' is item.get('top_category', '') else (
                                                                        '%s-' % item['top_category']),
-                                                               item['category'], item['url'])
-        self.send_wx_msg(item['id'], msg)
+                                                               item['category'], item['url'], item['url'], item['title'], item['pic_url'])
+
+        # msg = '【提醒】%s\n值:%d，不值:%d，评论:%d\n商城:%s,分类:%s%s\n%s' % (item['title'], item['worthy'],
+        #                                                        item['unworthy'], item['comment'], item['mall'],
+        #                                                        '' if '' is item.get('top_category', '') else (
+        #                                                                '%s-' % item['top_category']),
+        #                                                        item['category'], item['url'])
+        # self.send_wx_msg(item['id'], msg)
+        self.send_ding_msg(item['id'], msg)
+
 
     def watcher_services(self, url, num, interval, type):
         if None is not num and num < 1:

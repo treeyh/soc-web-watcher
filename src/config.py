@@ -29,6 +29,9 @@ APP_CONFIG = {
     # 缓存key前缀
     'cache_pre_key': 'soc-web-watcher',
 
+    # test
+    'dingding_send_url': 'https://oapi.dingtalk.com/robot/send?access_token=',
+
     # 微信消息发送用户名列表, 启动后会补充用户昵称列表内用户
     'msg_send_users': [
         'filehelper',
@@ -115,6 +118,3 @@ APP_CONFIG = {
 
 }
 
-if __name__ == '__main__':
-    s = '/data/log/a.c'
-    print(os.path.split(s)[-1])

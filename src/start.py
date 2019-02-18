@@ -66,8 +66,10 @@ def check_wx_login():
 
 def run():
     load_ignore_keywords(self_path)
-    itchat.auto_login(enableCmdQR=2, hotReload=True)
-    check_wx_login()
+
+    # itchat.auto_login(enableCmdQR=2, hotReload=True)
+    # check_wx_login()
+
     init_send_wx_users()
     smz = smzdm_watcher.SmzdmWatcher()
     smz.run()
