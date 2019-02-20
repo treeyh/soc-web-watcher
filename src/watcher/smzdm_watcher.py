@@ -75,7 +75,7 @@ class SmzdmWatcher(BaseWatcher):
 
         # 过滤忽略词
         for word in config.APP_CONFIG['ignore_keywords']:
-            if word in item['title'].lower() or word in item['category'] or word in item['top_category']:
+            if word in item['title'].lower() or word in item['category'].lower() or word in item['top_category'].lower():
                 msg = u'keyword matching ignore keywords。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item['category'], word)
                 self._logger.info(msg)
                 return False
