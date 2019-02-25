@@ -97,6 +97,8 @@ class SmzdmWatcher(BaseWatcher):
 
     def watcher_service(self, url, type, page):
         content = self.get_web_content(url)
+        if content is None:
+            return
         infos = json.loads(content)
         items = []
         if 'service1' is type:

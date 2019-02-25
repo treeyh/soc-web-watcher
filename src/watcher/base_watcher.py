@@ -5,6 +5,7 @@ import time
 import requests
 from random import choice
 import itchat
+import traceback
 
 from utils import log_utils, redis_utils, str_utils
 import config
@@ -47,12 +48,17 @@ class BaseWatcher(object):
         headers = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
                    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
                    "User-Agent": self.get_user_agent(),
+                   'Connection': 'close',
                    }
         session = requests.session()
         session.keep_alive = False
-        result = requests.get(url=url, headers=headers)
-        if 200 == result.status_code:
-            return result.content
+        try:
+            result = requests.get(url=url, headers=headers)
+            if 200 == result.status_code:
+                return result.content
+        except:
+            self._logger.error('error:' + traceback.format_exc())
+            return None
         return None
 
     def check_msg_send(self, id):
