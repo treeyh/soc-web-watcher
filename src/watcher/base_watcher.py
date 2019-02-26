@@ -53,7 +53,7 @@ class BaseWatcher(object):
         session = requests.session()
         session.keep_alive = False
         try:
-            result = requests.get(url=url, headers=headers)
+            result = requests.get(url=url, headers=headers, timeout=3)
             if 200 == result.status_code:
                 return result.content
         except:
