@@ -19,6 +19,9 @@ APP_CONFIG = {
     # 日志路径
     'log_path': os.path.join('/data/logs', APP_NAME),
 
+    # 是否打印详细日志
+    'is_print_detail' : True,
+
     # redis 配置
     'redis_config': {
         'host': '127.0.0.1',

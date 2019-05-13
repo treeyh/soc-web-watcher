@@ -69,7 +69,8 @@ class BaseWatcher(object):
         """
         key = '%s:%s' % (config.APP_CONFIG['cache_pre_key'], id)
         if None is not self._redis_utils.get(key):
-            self._logger.info('send msg exsit key:%s' % key)
+            if config.APP_CONFIG['is_print_detail']:
+                self._logger.info('send msg exsit key:%s' % key)
             return False
         ti = str(int(time.time()))
 
@@ -83,11 +84,12 @@ class BaseWatcher(object):
         :param msg: 消息内容
         :return:
         """
-        self._logger.info('send msg: %s' % msg)
+        # self._logger.info('send msg: %s' % msg)
         if self.check_msg_send(id):
             for user in self._send_wx_users:
                 result = itchat.send(msg, toUserName=user)
-                self._logger.info(result)
+                if config.APP_CONFIG['is_print_detail']:
+                    self._logger.info(result)
             self._logger.info('send msg over msgid:%s, users:%s, msg: %s' % (id, str_utils.json_encode(self._send_wx_users), msg))
             return True
         return False
@@ -99,10 +101,11 @@ class BaseWatcher(object):
         :param msg: 消息内容
         :return:
         """
-        self._logger.info('send msg: %s' % msg)
+        # self._logger.info('send msg: %s' % msg)
         if self.check_msg_send(id):
             result = requests.post(config.APP_CONFIG['dingding_send_url'], data=msg.encode('utf-8'), headers=self._ding_headers)
-            self._logger.info('send ding msg over msgid:%s, state: %d, result:%s, msg: %s' % (id, result.status_code, result.text, msg))
+            if config.APP_CONFIG['is_print_detail']:
+                self._logger.info('send ding msg over msgid:%s, state: %d, result:%s, msg: %s' % (id, result.status_code, result.text, msg))
             return True
         return False
 

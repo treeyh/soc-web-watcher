@@ -30,10 +30,23 @@ class SmzdmWatcher(BaseWatcher):
         return None
 
     def get_item_by_json(self, item, type):
+
+        cates = item.get('article_category', {})
+
+        if isinstance(cates, str):
+            category = cates
+        elif isinstance(cates, list):
+            if len(cates) > 0:
+                category = str(cates[0])
+            else:
+                category = '无'
+        else:
+            category = cates.get('title', '无')
+
         info = {
             'id': item.get('article_id', ''),
             'title': '%s-%s' % (item['article_title'], item['article_price']),
-            'category': item.get('article_category', {}).get('title', '无'),
+            'category': category,
             'mall': item['article_mall'],
             'url': item['article_url'],
             'prices': item['article_price'],
@@ -55,7 +68,8 @@ class SmzdmWatcher(BaseWatcher):
 
         info['price'] = self.get_price(info['prices'])
 
-        self._logger.info('catch_item:' + str_utils.json_encode(info))
+        if config.APP_CONFIG['is_print_detail']:
+            self._logger.info('catch_item:' + str_utils.json_encode(info))
         return info
 
     def check_item(self, item):
@@ -77,7 +91,8 @@ class SmzdmWatcher(BaseWatcher):
         for word in config.APP_CONFIG['ignore_keywords']:
             if word in item['title'].lower() or word in item['category'].lower() or word in item['top_category'].lower():
                 msg = u'keyword matching ignore keywords。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item['category'], word)
-                self._logger.info(msg)
+                if config.APP_CONFIG['is_print_detail']:
+                    self._logger.info(msg)
                 return False
 
         # 比较值不值比例
@@ -117,7 +132,8 @@ class SmzdmWatcher(BaseWatcher):
                 time_sort = info['timesort']
                 result = self.check_item(info)
                 if True is result:
-                    self._logger.info(' page:%d; url:%s; send_msg:%s;' % (page, url, str_utils.json_encode(info)))
+                    if config.APP_CONFIG['is_print_detail']:
+                        self._logger.info(' page:%d; url:%s; send_msg:%s;' % (page, url, str_utils.json_encode(info)))
                     self.send_msg(info)
             except Exception as e:
                 self._logger.error(str_utils.json_encode(item) + '; error:' + traceback.format_exc())
