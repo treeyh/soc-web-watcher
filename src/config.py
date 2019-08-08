@@ -33,7 +33,7 @@ APP_CONFIG = {
     'cache_pre_key': 'soc-web-watcher',
 
     # test
-    'dingding_send_url': 'https://oapi.dingtalk.com/robot/send?access_token=',
+    'dingding_send_url': 'https://oapi.dingtalk.com/robot/send?access_token=63b5f3b7d16adbba181d80076b5e48c351c2db8b28d0b4bcc21e7e849cd16a08',
 
     # 微信消息发送用户名列表, 启动后会补充用户昵称列表内用户
     'msg_send_users': [
