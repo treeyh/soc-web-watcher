@@ -29,15 +29,46 @@ def read_all_lines_file(file_path, method='r'):
     finally:
         fh.close()
 
+def walk2(path):
+    '''
+        列举path下的所有文件、文件夹
+    '''
+    fpaths = []
+    for pt, fl, fi in os.walk(path):
+        for f in fi:
+            fpaths.append((pt, f))
+    return fpaths
 
-def load_ignore_keywords(self_path):
-    keywords = read_all_lines_file(os.path.join(self_path, 'ignore_keywords.txt'))
-    keys = []
+def get_file_suffix(path):
+    '''
+        获取文件后缀
+        path：文件路径，可使用__file__
+    '''
+    return os.path.splitext(path)[1][1:]
+
+def load_ignore_keywords_info(filePath, keys):
+    filep = os.path.join(filePath[0], filePath[1])
+
+    if 'txt' != get_file_suffix(filep):
+        return keys
+
+    keywords = read_all_lines_file(filep)
     for key in keywords:
         k = key.strip().lower()
         if None is k or '' is k or '#' is k[0]:
             continue
         keys.append(k)
+    return keys
+
+
+def load_ignore_keywords(self_path):
+
+    ik_paths = walk2(os.path.join(self_path, 'ignore_keyword'))
+
+
+    keys = []
+    for p in ik_paths:
+        keys = load_ignore_keywords_info(p, keys)
     config.APP_CONFIG['ignore_keywords'] = keys
 
 
