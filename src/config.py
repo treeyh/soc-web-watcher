@@ -102,15 +102,21 @@ APP_CONFIG = {
 
     # 匹配关键词, 匹配到低于价位直接发提醒
     'match_keywords': [
-        {
-            # 关键词
-            'keyword': 'airpods',
-            # 价格限制，低于该价格会通知
-            'limit_price': 900,
-        },
+        # {
+        #     # 关键词
+        #     'keyword': 'airpods',
+        #     # 价格限制，低于该价格会通知
+        #     'limit_price': 900,
+        # },
         {
             # 关键词
             'keyword': '美浓烧',
+            # 价格限制，低于该价格会通知，为负数则不做价格判断
+            'limit_price': -1,
+        },
+        {
+            # 关键词
+            'keyword': 'Selsun Gold',
             # 价格限制，低于该价格会通知，为负数则不做价格判断
             'limit_price': -1,
         },
