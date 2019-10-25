@@ -32,6 +32,7 @@ class BaseWatcher(object):
             'Content-Type' : 'application/json',
         }
 
+
     def get_user_agent(self):
         """
         获取ua信息
