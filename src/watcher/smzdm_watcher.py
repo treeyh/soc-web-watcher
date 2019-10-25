@@ -79,13 +79,13 @@ class SmzdmWatcher(BaseWatcher):
             if key not in item['title'].lower() and key not in item['category'] and key not in item['top_category']:
                 continue
             if word['limit_price'] <= 0:
-                return True
+                return True, 0
             if None is not item.get('price', None) and word['limit_price'] >= item['price']:
-                return True
+                return True, 0
 
         # 判断价格是否正常获取
         if None is item.get('price', None) or config.APP_CONFIG['max_price'] <= item['price']:
-            return False
+            return False, 0
 
         # 过滤忽略词
         for word in config.APP_CONFIG['ignore_keywords']:
@@ -93,12 +93,12 @@ class SmzdmWatcher(BaseWatcher):
                 msg = u'keyword matching ignore keywords。名称：%s；分类：%s；匹配关键字：%s' % (item['title'], item['category'], word)
                 if config.APP_CONFIG['is_print_detail']:
                     self._logger.info(msg)
-                return False
+                return False, 0
 
         # 比较值不值比例
         count = item['worthy'] + item['unworthy']
         if count <= 0:
-            return False
+            return False, 0
 
         rate = item['worthy'] / count
 
@@ -106,9 +106,9 @@ class SmzdmWatcher(BaseWatcher):
             # 判断值比例评论数
             if count >= rates['min_assessment_count'] and rate >= rates['worth_rate'] and \
                     None is not item['comment'] and item['comment'] >= config.APP_CONFIG['min_comment']:
-                return True
+                return True, rate * 100
 
-        return False
+        return False, 0
 
     def watcher_service(self, url, type, page):
         content = self.get_web_content(url)
@@ -130,10 +130,12 @@ class SmzdmWatcher(BaseWatcher):
                 if None is info:
                     continue
                 time_sort = info['timesort']
-                result = self.check_item(info)
+                result, rate = self.check_item(info)
+
                 if True is result:
                     if config.APP_CONFIG['is_print_detail']:
                         self._logger.info(' page:%d; url:%s; send_msg:%s;' % (page, url, str_utils.json_encode(info)))
+                    item['title'] = item['title'] + " " + ('%.2f' % rate)
                     self.send_msg(info)
             except Exception as e:
                 self._logger.error(str_utils.json_encode(item) + '; error:' + traceback.format_exc())
