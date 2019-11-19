@@ -135,7 +135,7 @@ class SmzdmWatcher(BaseWatcher):
                 if True is result:
                     if config.APP_CONFIG['is_print_detail']:
                         self._logger.info(' page:%d; url:%s; send_msg:%s;' % (page, url, str_utils.json_encode(info)))
-                    item['title'] = item['title'] + " " + ('%.2f' % rate)
+                    info['title'] = info['title'] + " " + ('%.2f' % rate) + "%"
                     self.send_msg(info)
             except Exception as e:
                 self._logger.error(str_utils.json_encode(item) + '; error:' + traceback.format_exc())
