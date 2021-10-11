@@ -28,10 +28,10 @@ class RedisUtils(object):
 _redis_map = {}
 
 
-def get_redis_utils(host, port, db):
+def get_redis_utils(host, port, db, password):
   global _redis_map
   key = '%s:%d:%d' % (host, port, db)
   if None is _redis_map.get(key, None):
-    _redis_map[key] = RedisUtils(host, port, db)
+    _redis_map[key] = RedisUtils(host, port, db, password)
 
   return _redis_map[key]
