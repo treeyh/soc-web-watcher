@@ -7,7 +7,7 @@ cd $BASE_PATH
 
 if [ ! -f "BASE_PATH/venv/bin/activate" ]; then
     mkdir -p $BASE_PATH/venv
-    /opt/soft/python37/bin/python3 -m venv venv/.
+    /opt/soft/python311/bin/python3 -m venv venv/.
 fi
 
 source $BASE_PATH/venv/bin/activate
