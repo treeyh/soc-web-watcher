@@ -7,8 +7,8 @@ from random import choice
 import itchat
 import traceback
 
-from utils import log_utils, redis_utils, str_utils
-import config
+from soc_web_watcher.utils import log_utils, redis_utils, str_utils
+from soc_web_watcher import config
 
 
 class BaseWatcher(object):

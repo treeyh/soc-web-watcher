@@ -7,9 +7,9 @@ import re
 import json
 import traceback
 
-import config
-from utils import log_utils, str_utils
-from watcher.base_watcher import BaseWatcher
+from soc_web_watcher import config
+from soc_web_watcher.utils import log_utils, str_utils
+from soc_web_watcher.watcher.base_watcher import BaseWatcher
 
 
 class SmzdmWatcher(BaseWatcher):

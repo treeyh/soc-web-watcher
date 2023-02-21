@@ -5,10 +5,11 @@ import io
 import os
 import platform
 
-from utils import log_utils
-from watcher import smzdm_watcher
 import itchat
-import config
+
+from soc_web_watcher.utils import log_utils
+from soc_web_watcher.watcher import smzdm_watcher
+from soc_web_watcher import config
 
 _logger = None
 
@@ -98,6 +99,16 @@ def check_wx_login():
 
 
 def run():
+
+  self_path = os.path.split(os.path.realpath(__file__))[0]
+  config.APP_CONFIG['log_path'] = os.path.join(self_path, '..', 'logs')
+  _logger = log_utils.get_logger(os.path.join(config.APP_CONFIG['log_path'], 'run.log'))
+
+  system = platform.system()
+  if system is 'Windows':
+    _logger.error('soc-web-watcher can not run windows.')
+    sys.exit(-1)
+
   load_ignore_keywords(self_path)
 
   # itchat.auto_login(enableCmdQR=2, hotReload=True)
@@ -109,13 +120,4 @@ def run():
 
 
 if __name__ == '__main__':
-
-  self_path = os.path.split(os.path.realpath(__file__))[0]
-  config.APP_CONFIG['log_path'] = os.path.join(self_path, '..', 'logs')
-  _logger = log_utils.get_logger(os.path.join(config.APP_CONFIG['log_path'], 'run.log'))
-
-  system = platform.system()
-  if system is 'Windows':
-    _logger.error('soc-web-watcher can not run windows.')
-    sys.exit(-1)
   run()
