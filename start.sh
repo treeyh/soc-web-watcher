@@ -14,6 +14,6 @@ source $BASE_PATH/venv/bin/activate
 
 pip install -r $BASE_PATH/requirements.txt
 
-echo "nohup python $BASE_PATH/src/start.py >/dev/null 2>&1 &"
+echo "nohup python -m soc_web_watcher >/dev/null 2>&1 &"
 
-nohup python $BASE_PATH/src/start.py >/dev/null 2>&1 &
+nohup python -m soc_web_watcher >/dev/null 2>&1 &
