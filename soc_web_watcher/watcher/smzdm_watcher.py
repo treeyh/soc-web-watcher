@@ -115,7 +115,11 @@ class SmzdmWatcher(BaseWatcher):
     content = self.get_web_content(url)
     if content is None:
       return
-    infos = json.loads(content)
+    try:
+      infos = json.loads(content)
+    except Exception as e:
+      self._logger.error('json.loads_fail: '+ content + '; error:' + traceback.format_exc())
+      return
     items = []
     if 'service1' is type:
       items = infos.get('article_list', [])
