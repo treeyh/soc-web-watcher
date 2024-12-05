@@ -5,7 +5,7 @@ import io
 import os
 import platform
 
-import itchat
+#import itchat
 
 from soc_web_watcher.utils import log_utils
 from soc_web_watcher.watcher import smzdm_watcher
@@ -75,19 +75,19 @@ def load_ignore_keywords(self_path):
   config.APP_CONFIG['ignore_keywords'] = keys
 
 
-def init_send_wx_users():
-  '''
-  初始化微信发送用户名
-  :return:
-  '''
-
-  for nick_name in config.APP_CONFIG['msg_send_nick_names']:
-    users = itchat.search_friends(nickName=nick_name)
-    if None is users or len(users) <= 0:
-      continue
-    _logger.info('send wx nickname:%s; username:%s' % (nick_name, users[0].UserName))
-    config.APP_CONFIG['msg_send_users'].append(users[0].UserName)
-  _logger.info('send wx users:%s' % (config.APP_CONFIG['msg_send_users']))
+#def init_send_wx_users():
+#  '''
+#  初始化微信发送用户名
+#  :return:
+#  '''
+#
+#  for nick_name in config.APP_CONFIG['msg_send_nick_names']:
+#    users = itchat.search_friends(nickName=nick_name)
+#    if None is users or len(users) <= 0:
+#      continue
+#    _logger.info('send wx nickname:%s; username:%s' % (nick_name, users[0].UserName))
+#    config.APP_CONFIG['msg_send_users'].append(users[0].UserName)
+#  _logger.info('send wx users:%s' % (config.APP_CONFIG['msg_send_users']))
 
 
 def check_wx_login():
